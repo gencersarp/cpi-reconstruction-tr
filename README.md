@@ -94,7 +94,7 @@ base_quantities = shares_to_base_quantities(base_prices, expenditure_shares)
 # src/cpi_reconstruction_tr/indices/calculate.py
 fisher = fisher_index(base_prices, current_prices, q0, qt)
 ```
-- **Commit message**: `feat: implement Laspeyres Paasche Fisher and chained index calculators`
+- **Commit message**: `feat: implement Laspeyres, Paasche, Fisher, and chained index calculators`
 
 ### 7) Validation and sensitivity analysis
 - **Why**: quantify uncertainty and benchmark divergence objectively.
