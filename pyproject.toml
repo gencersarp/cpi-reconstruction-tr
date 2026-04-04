@@ -9,7 +9,10 @@ description = "Independent, reproducible inflation estimation workflows for Tür
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "CPI Reconstruction TR Contributors" }]
-dependencies = []
+dependencies = [
+    "matplotlib>=3.8",
+    "pandas>=2.1",
+]
 
 [project.scripts]
 inflation-pipeline = "cpi_reconstruction_tr.pipeline:main"
