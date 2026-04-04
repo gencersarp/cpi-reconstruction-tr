@@ -10,6 +10,7 @@ from cpi_reconstruction_tr.analysis.comparison import compare_series
 from cpi_reconstruction_tr.basket.weights import shares_to_base_quantities
 from cpi_reconstruction_tr.data.sources import list_sources
 from cpi_reconstruction_tr.indices.calculate import chained_index, fisher_index, laspeyres_index, paasche_index
+from cpi_reconstruction_tr.reporting.plots import plot_index_comparison
 
 
 def _read_json(path: str | Path) -> dict[str, float]:
@@ -49,6 +50,12 @@ def _cmd_compare(args: argparse.Namespace) -> None:
     print(json.dumps(compare_series(independent, official), indent=2, sort_keys=True))
 
 
+def _cmd_plot(args: argparse.Namespace) -> None:
+    independent = _read_json(args.independent_series)
+    official = _read_json(args.official_series)
+    plot_index_comparison(independent, official, output_path=args.output)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="CPI Reconstruction TR CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -76,6 +83,12 @@ def build_parser() -> argparse.ArgumentParser:
     compare_parser.add_argument("--independent-series", required=True)
     compare_parser.add_argument("--official-series", required=True)
     compare_parser.set_defaults(func=_cmd_compare)
+
+    plot_parser = subparsers.add_parser("plot", help="Generate comparison plot between independent and official series")
+    plot_parser.add_argument("--independent-series", required=True)
+    plot_parser.add_argument("--official-series", required=True)
+    plot_parser.add_argument("--output", help="Path to save the plot (e.g. plot.png)")
+    plot_parser.set_defaults(func=_cmd_plot)
 
     return parser
 
