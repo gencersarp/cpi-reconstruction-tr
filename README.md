@@ -105,14 +105,8 @@ metrics = compare_series(independent, official)
 ```
 - **Commit message**: `feat: add benchmark comparison metrics and basket sensitivity simulation`
 
-### 8) Visualization and reporting (next step)
+### 8) Visualization and reporting
 - **Why**: makes outputs interpretable for researchers and decision-makers.
-- **Code snippet (planned)**:
-```python
-# planned module: src/cpi_reconstruction_tr/reporting/plots.py
-# def plot_index_comparison(...):
-#     ...
-```
 - **Commit message**: `feat: add reproducible reporting visuals for inflation estimates`
 
 ## Quick start
@@ -128,10 +122,19 @@ Prepare JSON files for `base_prices`, `current_prices`, and `base_shares`:
 
 ```bash
 python -m cpi_reconstruction_tr.pipeline compute-indices \
-  --base-prices /absolute/path/base_prices.json \
-  --current-prices /absolute/path/current_prices.json \
-  --base-shares /absolute/path/base_shares.json \
+  --base-prices data/raw/base_prices.json \
+  --current-prices data/raw/current_prices.json \
+  --base-shares data/raw/base_shares.json \
   --use-base-quantities-for-paasche
+```
+
+### Example comparison plot
+
+```bash
+python -m cpi_reconstruction_tr.pipeline plot \
+  --independent-series data/raw/independent_series.json \
+  --official-series data/raw/official_series.json \
+  --output sample_comparison.png
 ```
 
 ## Methodological safeguards
