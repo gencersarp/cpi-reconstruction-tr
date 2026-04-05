@@ -61,6 +61,32 @@ def fisher_index(
     return math.sqrt(l_value * p_value)
 
 
+def walsh_index(
+    base_prices: dict[str, float],
+    current_prices: dict[str, float],
+    base_quantities: dict[str, float],
+    current_quantities: dict[str, float],
+) -> float:
+    """Compute Walsh price index using geometric mean of base and current quantities.
+
+    The Walsh index is a superlative index that weights price relatives by the
+    geometric mean of quantities in both periods, giving it better axiomatic
+    properties than Laspeyres or Paasche alone.
+
+    W = Σ p_t * sqrt(q_0 * q_t)  /  Σ p_0 * sqrt(q_0 * q_t)
+    """
+    _validate_inputs(base_prices, current_prices, base_quantities)
+    _validate_inputs(base_prices, current_prices, current_quantities)
+
+    common_items = set(base_quantities) & set(current_quantities)
+    if not common_items:
+        raise ValueError("base_quantities and current_quantities share no common items")
+
+    numerator = sum(current_prices[i] * math.sqrt(base_quantities[i] * current_quantities[i]) for i in common_items)
+    denominator = sum(base_prices[i] * math.sqrt(base_quantities[i] * current_quantities[i]) for i in common_items)
+    return 100.0 * numerator / denominator
+
+
 def chained_index(period_relatives: list[float], base_value: float = 100.0) -> list[float]:
     """Chain monthly/period relatives (e.g., 1.03 for +3%) into an index level."""
 
