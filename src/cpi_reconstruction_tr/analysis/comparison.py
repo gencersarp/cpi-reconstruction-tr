@@ -43,6 +43,29 @@ def compare_series(
     }
 
 
+def mean_absolute_percentage_error(
+    independent: dict[str, float],
+    official: dict[str, float],
+) -> float:
+    """Compute MAPE between two aligned index series.
+
+    Returns the mean absolute percentage error as a fraction (0.05 = 5 %).
+    More interpretable than MAE when the series are in index-point units
+    because it normalises each residual by the official reference value.
+
+    Raises ``ValueError`` if the two series share no common dates.
+    """
+    common_dates = sorted(set(independent).intersection(official))
+    if not common_dates:
+        raise ValueError("No overlapping dates between series")
+
+    pct_errors = [
+        abs(independent[d] - official[d]) / max(abs(official[d]), 1e-9)
+        for d in common_dates
+    ]
+    return statistics.mean(pct_errors)
+
+
 def sensitivity_to_weights(
     base_prices: dict[str, float],
     current_prices: dict[str, float],
