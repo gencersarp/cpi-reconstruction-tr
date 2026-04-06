@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 
 def normalize_weights(weights: dict[str, float]) -> dict[str, float]:
     """Normalize expenditure shares to sum to one."""
@@ -14,6 +16,35 @@ def normalize_weights(weights: dict[str, float]) -> dict[str, float]:
         raise ValueError("Weight sum must be positive")
 
     return {item: value / total for item, value in weights.items()}
+
+
+def geometric_mean_weights(
+    weight_series: list[dict[str, float]],
+) -> dict[str, float]:
+    """Compute geometric mean weights from a time series of expenditure shares.
+
+    Used in superlative index construction (e.g. Törnqvist) and for
+    producing a single representative basket from multiple period shares.
+    Each dict must cover the same set of items. The result is normalised
+    to sum to one.
+
+    Raises ``ValueError`` if the series is empty or item sets are inconsistent.
+    """
+    if not weight_series:
+        raise ValueError("weight_series cannot be empty")
+
+    items = set(weight_series[0].keys())
+    for i, w in enumerate(weight_series[1:], start=1):
+        if set(w.keys()) != items:
+            raise ValueError(f"Item set at index {i} differs from index 0")
+
+    n = len(weight_series)
+    geo: dict[str, float] = {}
+    for item in items:
+        log_sum = sum(math.log(max(w[item], 1e-300)) for w in weight_series)
+        geo[item] = math.exp(log_sum / n)
+
+    return normalize_weights(geo)
 
 
 def shares_to_base_quantities(
